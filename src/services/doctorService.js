@@ -56,8 +56,11 @@ let getAllDoctors = () => {
 let getInfoDoctor = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+
             if (!data.doctorId || !data.contentHTML || !data.contentMarkdown
-                || !data.action) {
+                || !data.action || !data.selectedPrice || !data.selectedPayment ||
+                !data.selectedProvince || !data.nameClinic || !data.addressClinic ||
+                !data.note) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing parameter'
@@ -82,6 +85,36 @@ let getInfoDoctor = (data) => {
                         doctorMarkdown.updateAt = new Date()
                         await doctorMarkdown.save()
                     }
+                }
+
+                // upser to doctor_info table
+                let doctorInfo = await db.Doctor_info.findOne({
+                    where: {
+                        doctorId: data.doctorId,
+                    },
+                    raw: false
+                })
+                if (doctorInfo) {
+                    // update
+                    doctorInfo.doctorId = data.doctorId
+                    doctorInfo.priceId = data.selectedPrice
+                    doctorInfo.provinceId = data.selectedProvince
+                    doctorInfo.paymentId = data.selectedPayment
+                    doctorInfo.addressClinic = data.addressClinic
+                    doctorInfo.nameClinic = data.nameClinic
+                    doctorInfo.note = data.note
+                    await doctorInfo.save()
+                } else {
+                    // Create
+                    await db.Doctor_info.create({
+                        doctorId: data.doctorId,
+                        priceId: data.selectedPrice,
+                        provinceId: data.selectedProvince,
+                        paymentId: data.selectedPayment,
+                        addressClinic: data.addressClinic,
+                        nameClinic: data.nameClinic,
+                        note: data.note,
+                    })
                 }
 
 
