@@ -151,6 +151,17 @@ let getDetailDoctorById = (id) => {
                         {
                             model: db.AllCode, as: 'positionData', attributes: ['valueEn', 'valueVi']
                         },
+                        {
+                            model: db.Doctor_info,
+                            attributes: {
+                                exclude: ['id', 'doctorId']
+                            },
+                            include: [
+                                { model: db.AllCode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.AllCode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.AllCode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] }
+                            ]
+                        },
 
                     ],
                     raw: false,
@@ -238,6 +249,7 @@ let getScheduleByDate = (doctorId, date) => {
                     raw: false,
                     nest: true
                 })
+
                 if (!dataSchedule) dataSchedule = []
                 resolve({
                     errCode: 0,

@@ -13,7 +13,13 @@ module.exports = (sequelize, DataTypes) => {
             AllCode.hasMany(models.User, { foreignKey: 'position', as: 'positionData' })
             AllCode.hasMany(models.User, { foreignKey: 'gender', as: 'genderData' })
             AllCode.hasMany(models.Schedule, { foreignKey: 'timeType', as: 'timeTypeData' })
+
+            AllCode.hasMany(models.Doctor_info, { foreignKey: 'priceId', as: 'priceTypeData' })
+            AllCode.hasMany(models.Doctor_info, { foreignKey: 'provinceId', as: 'provinceTypeData' })
+            AllCode.hasMany(models.Doctor_info, { foreignKey: 'paymentId', as: 'paymentTypeData' })
+
         }
+
     };
     AllCode.init({
         keyMap: DataTypes.STRING,
