@@ -82,8 +82,20 @@ let getScheduleByDate = async (req, res) => {
     }
 }
 
+let getExtraInfoDoctorById = async (req, res, next) => {
+    try {
+        let info = await doctorService.getExtraInfoDoctorById(req.query.doctorId)
+        return res.status(200).json(info)
+    } catch (err) {
+        console.log(err)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from the server'
+        })
+    }
+}
 
 module.exports = {
     getTopDoctorHome, getAllDoctors, postInfoDoctor, getDetailDoctorById,
-    bulkCreateSchedule, getScheduleByDate,
+    bulkCreateSchedule, getScheduleByDate, getExtraInfoDoctorById,
 }
