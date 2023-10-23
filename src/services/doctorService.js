@@ -53,17 +53,33 @@ let getAllDoctors = () => {
     })
 }
 
+let checkRequiredFields = (data) => {
+    let arrFields = ['doctorId', 'contentHTML', 'contentMarkdown',
+        'action', 'selectedPrice', 'selectedPayment', 'selectedProvince',
+        'nameClinic', 'addressClinic', 'note', 'specialtyId']
+    let isValid = true
+    let element = ''
+    for (let i = 0; i < arrFields.length; i++) {
+        if (!data[arrFields[i]]) {
+            isValid = false
+            element = arrFields[i]
+            break
+        }
+    }
+    return {
+        isValid, // isValid : isValid
+        element: element
+    }
+}
+
 let getInfoDoctor = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-
-            if (!data.doctorId || !data.contentHTML || !data.contentMarkdown
-                || !data.action || !data.selectedPrice || !data.selectedPayment ||
-                !data.selectedProvince || !data.nameClinic || !data.addressClinic ||
-                !data.note) {
+            let checkObj = checkRequiredFields(data)
+            if (checkObj.isValid === false) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing parameter'
+                    errMessage: `Missing parameter ${checkObj.element}`
                 })
             } else {
                 if (data.action === 'CREATE') {
@@ -103,6 +119,8 @@ let getInfoDoctor = (data) => {
                     doctorInfo.addressClinic = data.addressClinic
                     doctorInfo.nameClinic = data.nameClinic
                     doctorInfo.note = data.note
+                    doctorInfo.specialtyId = data.specialtyId
+                    doctorInfo.clinicId = data.clinicId
                     await doctorInfo.save()
                 } else {
                     // Create
@@ -114,6 +132,8 @@ let getInfoDoctor = (data) => {
                         addressClinic: data.addressClinic,
                         nameClinic: data.nameClinic,
                         note: data.note,
+                        specialtyId: data.specialtyId,
+                        clinicId: data.clinicId
                     })
                 }
 
