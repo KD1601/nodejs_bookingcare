@@ -1,7 +1,7 @@
 const nodeMailer = require('nodemailer')
 require('dotenv').config();
 
-exports.sendSimpleEmail = (dataSend) => {
+let sendSimpleEmail = (dataSend) => {
     const transport = nodeMailer.createTransport({
         host: process.env.MAIL_HOST,
         port: process.env.MAIL_PORT,
@@ -60,3 +60,57 @@ let getBodyHTMLEmail = (dataSend) => {
     }
     return result
 }
+
+let getBodyHTMLEmailRemedy = (dataSend) => {
+    let result = ''
+    if (dataSend.language === 'vi') {
+        result = `
+    
+        <h3>Xin chào ${dataSend.patientName}</h3>
+        <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Felix Care thành công</p>
+        <p>Thông tin đơn thuốc/ hóa đơn được gửi trong file đính kèm. </p>
+        
+        <div>Xin chân thành cảm ơn</div>
+        `
+    }
+    if (dataSend.language === 'en') {
+        result = `
+    
+        <h3>Dear ${dataSend.patientName}</h3>
+        <p>You received this email because you made an online medical appointment on Felix Care</p>
+        <p>Prescription/invoice information is sent in the attached file.</p>
+        
+        <div>Sincerely thank</div>
+        `
+    }
+    return result
+}
+
+let sendAttachment = (dataSend) => {
+    const transport = nodeMailer.createTransport({
+        host: process.env.MAIL_HOST,
+        port: process.env.MAIL_PORT,
+        secure: false,
+        auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD,
+        }
+    })
+
+    const options = {
+        from: process.env.MAIL_FROM_ADDRESS,
+        to: dataSend.email,
+        subject: "Kết quả đặt lịch khám bệnh",
+        html: getBodyHTMLEmailRemedy(dataSend),
+        attachments: [
+            {   // encoded string as an attachment
+                filename: `remedy-${dataSend.patientId}- ${new Date().getTime()}.png`,
+                content: dataSend.imgBase64.split("base64,")[1],
+                encoding: 'base64'
+            },
+        ]
+    }
+    return transport.sendMail(options);
+}
+
+module.exports = { sendAttachment, sendSimpleEmail }
