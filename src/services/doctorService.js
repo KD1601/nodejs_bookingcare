@@ -12,6 +12,7 @@ let getTopDoctorHome = (limit) => {
                 limit: limit,
                 where: { roleId: 'R2' },
                 order: [['createdAt', 'DESC']],
+
                 attributes: {
                     exclude: ['password']
                 },
@@ -29,6 +30,7 @@ let getTopDoctorHome = (limit) => {
                 data: users
             })
         } catch (e) {
+            console.log('error when get top doctor: ', e)
             reject(e);
         }
     })
